@@ -21,12 +21,15 @@ SRCDIR = src
 # Object directory
 OBJDIR = build
 
+# Bin directory
+BINDIR = bin
+
 # Source files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 
-# Target executable
-TARGET = ../build/prog
+# Target executable in bin folder
+TARGET = $(BINDIR)/prog
 
 # Build rule
 $(TARGET): $(OBJS)
@@ -36,10 +39,10 @@ $(TARGET): $(OBJS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-# Create the build directory if it doesn't exist
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+# Create the build and bin directories if they don't exist
+$(OBJDIR) $(BINDIR):
+	mkdir -p $@
 
 # Clean rule
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -rf $(OBJDIR)/*.o $(TARGET)
