@@ -3,6 +3,12 @@
 // Constructor
 Track::Track(double width) : trackWidth(width) {}
 
+// Accessors
+const std::vector<Point> &Track::getTrackPoints() const
+{
+    return this->trackPoints;
+}
+
 // Function to add a point to the track boundary
 void Track::addTrackPoint(double x, double y)
 {

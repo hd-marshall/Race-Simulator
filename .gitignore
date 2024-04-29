@@ -42,3 +42,6 @@
 *.bak
 *.swp
 *~
+
+# Ignore VSCode settings
+.vscode/

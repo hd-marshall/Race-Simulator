@@ -1,5 +1,5 @@
-#ifndef RACETRACK_H
-#define RACETRACK_H
+#ifndef TRACK_H
+#define TRACK_H
 
 #include <vector>
 #include <cmath>
@@ -20,6 +20,10 @@ public:
     // Constructor
     Track(double width);
 
+    // Accessors
+    const std::vector<Point>& getTrackPoints() const;
+
+
     // Function to add a point to the track boundary
     void addTrackPoint(double x, double y);
 
@@ -32,4 +36,4 @@ public:
     // Other functions to manipulate and query the track characteristics can be added here
 };
 
-#endif // RACETRACK_H
+#endif // TRACK_H
