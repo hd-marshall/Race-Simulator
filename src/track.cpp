@@ -1,7 +1,8 @@
 #include "../include/Track.h"
 
 // Constructor
-Track::Track(double width) : trackWidth(width) {}
+Track::Track(double width)
+    : trackWidth(width) {}
 
 // Accessors
 const std::vector<Point> &Track::getTrackPoints() const
