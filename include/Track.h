@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 
 struct Point
 {
@@ -13,14 +14,19 @@ struct Point
 class Track
 {
 private:
+    std::string name;
     std::vector<Point> trackPoints; // Points defining the track boundary
     double trackWidth;              // Width of the track
 
 public:
     // Constructor
-    Track(double width);
+    Track(const std::string &name, double width);
 
     // Accessors
+    const std::string& getTrackName() const;
+
+    const double& getTrackWidth() const;
+
     const std::vector<Point>& getTrackPoints() const;
 
 

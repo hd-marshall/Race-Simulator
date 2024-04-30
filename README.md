@@ -19,12 +19,18 @@ The tool incorporates mathematical models to simulate tire degradation throughou
 
 Notes for Development:
 
-        -learn make files
-    adjust main to show the structure of the track
+    Completed notes:
+        - Basic Track DS Completed
+            - However creating accurate turns angles to simulate the car at the moment im not sure how it will work
+        - Basic Car DS Completed
+        - SFML library included
+        - Make file completed
 
-    Implement data structures for representing the track layout.
-    Develop a graphical user interface (GUI) to display the track and interact with users.
-    Research and implement algorithms for calculating the optimal racing line.
-    Integrate mathematical models for simulating tire degradation based on various factors.
-    Test the simulation thoroughly to ensure accuracy and realism.
-    Document the codebase and provide clear instructions for users on how to use the tool.
+    Current in head thoughts:
+        - Create the track layout
+            - Track points working from the object
+            - ** How to use trackWidth to program a consistent size width if it is curving or in either the x or y
+            - Add a background in SFML
+
+    Weaknesses to improve on:
+        - learn make files (better)

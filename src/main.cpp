@@ -1,43 +1,45 @@
 #include <SFML/Graphics.hpp>
-#include "../include/Track.h" // Include the Track header file
+#include "../include/Track.h" // Include the header file for the Track class
+
+Track createTrackObject()
+{
+    // Create a track object for Monaco track
+    Track monacoTrack("Monaco", 200.0); // Assuming constructor takes name and width
+
+    // Add track points to define the Monaco track's shape
+    // You can manually add points based on the Monaco track layout
+    // For simplicity, we'll add some arbitrary points here
+    monacoTrack.addTrackPoint(100, 100);
+    monacoTrack.addTrackPoint(300, 100);
+    monacoTrack.addTrackPoint(400, 200);
+    monacoTrack.addTrackPoint(300, 300);
+    monacoTrack.addTrackPoint(100, 300);
+    monacoTrack.addTrackPoint(0, 200);
+
+    return monacoTrack;
+}
+
+sf::RectangleShape createTrackVisual(const std::vector<Point> &trackPoints)
+{
+    sf::RectangleShape road;
+
+    double sizeX = trackPoints[0].x - trackPoints[1].x;
+    double sizeY = trackPoints[0].y - trackPoints[1].y + 200;
+
+    road.setSize(sf::Vector2f(sizeX, sizeY)); // Set the size of the rectangle
+    road.setPosition(600, 400);               // Set the position of the rectangle
+    road.setFillColor(sf::Color::White);      // Set the fill color of the rectangle
+    road.setOutlineThickness(5);              // Set the thickness of the outline
+
+    return road;
+}
 
 int main()
 {
-    // Create a window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Track Example");
+    // Create SFML window
+    Track track = createTrackObject();
 
-    // Specify the track width
-    double trackWidth = 100.0; // Change this to your desired track width
-
-    // Create a Track object with the specified width
-    Track track(trackWidth);
-
-    // Add points to define a circular track
-    const int numPoints = 50;
-    const double centerX = 400.0;
-    const double centerY = 300.0;
-    const double radius = 300.0; // Adjust this radius based on track width
-
-    for (int i = 0; i < numPoints; ++i)
-    {
-        double angle = 2 * M_PI * i / numPoints;
-        double x = centerX + radius * cos(angle);
-        double y = centerY + radius * sin(angle);
-        track.addTrackPoint(x, y);
-    }
-
-    // Calculate track boundary points with offset for track width
-    std::vector<Point> trackBoundary = track.getTrackPoints();
-    for (size_t i = 0; i < trackBoundary.size() - 1; ++i)
-    {
-        double dx = trackBoundary[i + 1].x - trackBoundary[i].x;
-        double dy = trackBoundary[i + 1].y - trackBoundary[i].y;
-        double length = sqrt(dx * dx + dy * dy);
-        double offsetX = (trackWidth / 2.0) * (dy / length);
-        double offsetY = (trackWidth / 2.0) * (-dx / length);
-        trackBoundary[i].x += offsetX;
-        trackBoundary[i].y += offsetY;
-    }
+    sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
 
     // Main loop
     while (window.isOpen())
@@ -53,25 +55,9 @@ int main()
         // Clear the window
         window.clear();
 
-        // Draw the track
-        sf::VertexArray trackLines(sf::Quads, trackBoundary.size() * 2);
-        for (size_t i = 0; i < trackBoundary.size(); ++i)
-        {
-            int next = (i + 1) % trackBoundary.size();
-            sf::Vector2f dir(trackBoundary[next].x - trackBoundary[i].x, trackBoundary[next].y - trackBoundary[i].y);
-            sf::Vector2f perp(-dir.y, dir.x);
-            perp /= sqrt(perp.x * perp.x + perp.y * perp.y);
-            perp *= static_cast<float>(trackWidth / 2.0);
+        window.draw(createTrackVisual(track.getTrackPoints()));
 
-            trackLines[i * 2].position = sf::Vector2f(trackBoundary[i].x + perp.x, trackBoundary[i].y + perp.y);
-            trackLines[i * 2 + 1].position = sf::Vector2f(trackBoundary[i].x - perp.x, trackBoundary[i].y - perp.y);
-
-            trackLines[i * 2].color = sf::Color::White;
-            trackLines[i * 2 + 1].color = sf::Color::White;
-        }
-        window.draw(trackLines);
-
-        // Display the content of the window
+        // Display the window
         window.display();
     }
 

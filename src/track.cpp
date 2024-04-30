@@ -1,10 +1,20 @@
 #include "../include/Track.h"
 
 // Constructor
-Track::Track(double width)
-    : trackWidth(width) {}
+Track::Track(const std::string &name, double width)
+    : name(name), trackWidth(width) {}
 
 // Accessors
+const std::string &Track::getTrackName() const
+{
+    return this->name;
+}
+
+const double &Track::getTrackWidth() const
+{
+    return this->trackWidth;
+}
+
 const std::vector<Point> &Track::getTrackPoints() const
 {
     return this->trackPoints;
