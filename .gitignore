@@ -45,6 +45,3 @@
 
 # Ignore VSCode settings
 .vscode/
-
-# Exe folder
-bin/*
