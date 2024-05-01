@@ -16,6 +16,7 @@ class Track
 private:
     std::string name;
     std::vector<Point> trackPoints; // Points defining the track boundary
+    int selectedTrackPoint = 0;
 
 public:
     // Constructor

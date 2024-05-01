@@ -25,12 +25,17 @@ Notes for Development:
         - Basic Car DS Completed
         - SFML library included
         - Make file completed
+        - Add a background in SFML
+
 
     Current in head thoughts:
         - Create the track layout
             - Track points working from the object
-            - ** How to use trackWidth to program a consistent size width if it is curving or in either the x or y
-            - Add a background in SFML
+        - Using splines ot create the edges between the vertices
+        - Add in a move the nodes with drag feature
+            - Add in a selected Node to the track Object
+
 
     Weaknesses to improve on:
         - learn make files (better)
+        - Best loop functions for different data types

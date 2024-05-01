@@ -23,5 +23,5 @@ const Point &Track::getSpecificTrackPoint(int num) const
 // Function to add a point to the track boundary
 void Track::addTrackPoint(double x, double y)
 {
-    trackPoints.push_back({x, y});
+    this->trackPoints.push_back({x, y});
 }
