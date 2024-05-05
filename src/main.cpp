@@ -26,10 +26,10 @@ Track createTrackObject()
     return track;
 }
 
-sf::RectangleShape createTrackVertexVisuals(Point &trackVector, int currentVector, int selectedVector)
+sf::RectangleShape createTrackPointVisuals(Point &trackVector, int currentVector, int selectedVector)
 {
     sf::RectangleShape road;
-    road.setSize(sf::Vector2f(25, 25));             // Set the size of the rectangle
+    road.setSize(sf::Vector2f(10, 10));             // Set the size of the rectangle
     road.setPosition(trackVector.x, trackVector.y); // Set the position of the rectangle
     if (selectedVector != currentVector)
     {
@@ -39,15 +39,45 @@ sf::RectangleShape createTrackVertexVisuals(Point &trackVector, int currentVecto
     {
         road.setFillColor(sf::Color::Red); // Set the fill color of the rectangle
     }
-    road.setOutlineThickness(5); // Set the thickness of the outline
+    road.setOutlineThickness(3); // Set the thickness of the outline
     road.setOutlineColor(sf::Color(128, 128, 128));
     return road;
+}
+
+sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
+{
+    sf::RectangleShape roadVisual(sf::Vector2f(5, 5));
+    roadVisual.setPosition(roadPoint.x, roadPoint.y);
+    roadVisual.setFillColor(sf::Color(128, 128, 128));
+
+    return roadVisual;
+}
+
+sf::ConvexShape createCarVisuals(Point carPoint)
+{
+    // Define the points of the triangle
+    sf::Vector2f point1(carPoint.x + 4, carPoint.x);
+    sf::Vector2f point2(carPoint.x + 8, carPoint.x);
+    sf::Vector2f point3(carPoint.x + 6, carPoint.x + 6);
+
+    // Create a triangle shape
+    sf::ConvexShape carShape;
+    carShape.setPointCount(3); // Set the number of points
+    carShape.setPoint(0, point1);
+    carShape.setPoint(1, point2);
+    carShape.setPoint(2, point3);
+
+    // Set the triangle's fill color
+    carShape.setFillColor(sf::Color::Red);
+
+    return carShape;
 }
 
 int main()
 {
     Track track = createTrackObject();
-    int selectedVertex = -1;
+    std::vector<Point> raceTrackPoints = track.getTrackPoints();
+    int selectedPoint = -1;
 
     // Create SFML window
     sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
@@ -55,7 +85,7 @@ int main()
 
     while (window.isOpen())
     {
-        std::vector<Point> raceTrackVectors = track.getTrackPoints();
+        raceTrackPoints = track.getTrackPoints();
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -67,57 +97,54 @@ int main()
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
                 *mousePosPtr = sf::Mouse::getPosition(window);
-                for (size_t i = 0; i < raceTrackVectors.size(); i++)
+                for (size_t i = 0; i < raceTrackPoints.size(); i++)
                 {
-                    Point &point = raceTrackVectors[i];
+                    Point &point = raceTrackPoints[i];
                     int dx = mousePosPtr->x - point.x;
                     int dy = mousePosPtr->y - point.y;
 
                     if (dx * dx + dy * dy <= 30 * 30)
                     {
-                        selectedVertex = i;
+                        selectedPoint = i;
                     }
                 }
             }
 
-            if (selectedVertex != -1 && event.type == sf::Event::KeyPressed)
+            if (selectedPoint != -1 && event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    track.changeTrackPointValues("w", selectedVertex);
+                    track.changeTrackPointValues("w", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::S)
                 {
-                    track.changeTrackPointValues("s", selectedVertex);
+                    track.changeTrackPointValues("s", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::A)
                 {
-                    track.changeTrackPointValues("a", selectedVertex);
+                    track.changeTrackPointValues("a", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::D)
                 {
-                    track.changeTrackPointValues("d", selectedVertex);
+                    track.changeTrackPointValues("d", selectedPoint);
                 }
             }
         }
 
         window.clear(sf::Color::Green);
 
-        // Draw track vertices
-        for (size_t i = 0; i < raceTrackVectors.size(); i++)
+        // Draw track curve
+        for (float t = 0.0f; t < (float)(raceTrackPoints.size()); t += 0.01f)
         {
-            std::vector<Point> newTrack = track.getTrackPoints();
-            window.draw(createTrackVertexVisuals(newTrack[i], i, selectedVertex));
+            Point roadPoint = track.getTrackCurvePoint(t, true);
+            window.draw(createTrackRoadVisuals(roadPoint));
+            window.draw(createCarVisuals(roadPoint));
         }
 
-        // Draw track curve
-        for (float t = 0.0f; t < (float)(track.getTrackPoints().size() - 3); t += 0.05f)
+        // Draw track vertices
+        for (size_t i = 0; i < raceTrackPoints.size(); i++)
         {
-            Point currentRoad = track.getTrackCurve(t);
-            sf::RectangleShape pixel(sf::Vector2f(5, 5));
-            pixel.setPosition(currentRoad.x, currentRoad.y);
-            pixel.setFillColor(sf::Color::Red);
-            window.draw(pixel);
+            window.draw(createTrackPointVisuals(raceTrackPoints[i], i, selectedPoint));
         }
 
         window.display();

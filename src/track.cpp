@@ -6,6 +6,11 @@
 Track::Track(const std::string &name)
     : name(name) {}
 
+void Track::addTrackPoint(double x, double y)
+{
+    this->trackPoints.push_back({x, y});
+}
+
 // Accessors
 const std::string &Track::getTrackName() const
 {
@@ -22,16 +27,31 @@ const Point &Track::getSpecificTrackPoint(int num) const
     return this->trackPoints[num];
 }
 
-Point Track::getTrackCurve(float t) const
+const Car &Track::getCar() const
 {
-    int p0 = static_cast<int>(t); // Integer part of t
-    int p1 = p0 + 1;
-    int p2 = p1 + 1;
-    int p3 = p2 + 1;
+    return this->car;
+}
 
-    // std::cout << "p0: " << p0 << ", p1: " << p1 << ", p2: " << p2 << ", p3: " << p3 << std::endl;
+Point Track::getTrackCurvePoint(float t, bool looped = false) const
+{
+    int p0, p1, p2, p3;
 
-    t -= p0; // Fractional part of t
+    if (!looped)
+    {
+        p1 = (int)t + 1;
+        p2 = p1 + 1;
+        p3 = p2 + 1;
+        p0 = p1 - 1;
+    }
+    else
+    {
+        p1 = (int)t;
+        p2 = (p1 + 1) % this->trackPoints.size();
+        p3 = (p2 + 1) % this->trackPoints.size();
+        p0 = p1 >= 1 ? p1 - 1 : this->trackPoints.size() - 1;
+    }
+
+    t = t - (int)t;
 
     // Ensure p1, p2, and p3 are within bounds
     p1 = std::min(std::max(p1, 0), static_cast<int>(trackPoints.size()) - 1);
@@ -50,39 +70,47 @@ Point Track::getTrackCurve(float t) const
     float tx = 0.5f * (trackPoints[p0].x * q1 + trackPoints[p1].x * q2 + trackPoints[p2].x * q3 + trackPoints[p3].x * q4);
     float ty = 0.5f * (trackPoints[p0].y * q1 + trackPoints[p1].y * q2 + trackPoints[p2].y * q3 + trackPoints[p3].y * q4);
 
-    // std::cout << "tx: " << tx << ", ty: " << ty << std::endl;
-
     return {tx, ty};
 }
 
-// Point Track::getTrackCurve(float t) const
-// {
-//     int p0, p1, p2, p3;
-//     p1 = (int)t + 1;
-//     p2 = p1 + 1;
-//     p3 = p2 + 1;
-//     p0 = p1 - 1;
-
-//     t = t - (int)t;
-
-//     float tt = t * t;
-//     float ttt = tt * t;
-
-//     float q1 = -ttt + 0.2f * tt - t;
-//     float q2 = 3.0f * ttt - 5.0f * tt + 2.0f;
-//     float q3 = -3.0f * ttt + 4.0f * tt + t;
-//     float q4 = ttt - tt;
-
-//     float tx = 0.5f * (this->trackPoints[p0].x * q1 + this->trackPoints[p1].x * q2 + this->trackPoints[p2].x * q3 + this->trackPoints[p3].x * q4);
-//     float ty = 0.5f * (this->trackPoints[p0].y * q1 + this->trackPoints[p1].y * q2 + this->trackPoints[p2].y * q3 + this->trackPoints[p3].y * q4);
-
-//     return {tx, ty};
-// }
-
-// Function to add a point to the track boundary
-void Track::addTrackPoint(double x, double y)
+Point Track::getTrackCurveGradient(float t, bool looped) const
 {
-    this->trackPoints.push_back({x, y});
+    int p0, p1, p2, p3;
+
+    if (!looped)
+    {
+        p1 = (int)t + 1;
+        p2 = p1 + 1;
+        p3 = p2 + 1;
+        p0 = p1 - 1;
+    }
+    else
+    {
+        p1 = (int)t;
+        p2 = (p1 + 1) % this->trackPoints.size();
+        p3 = (p2 + 1) % this->trackPoints.size();
+        p0 = p1 >= 1 ? p1 - 1 : this->trackPoints.size() - 1;
+    }
+
+    t = t - (int)t;
+
+    // Ensure p1, p2, and p3 are within bounds
+    p1 = std::min(std::max(p1, 0), static_cast<int>(trackPoints.size()) - 1);
+    p2 = std::min(std::max(p2, 0), static_cast<int>(trackPoints.size()) - 1);
+    p3 = std::min(std::max(p3, 0), static_cast<int>(trackPoints.size()) - 1);
+
+    // Calculate the curve using Catmull-Rom interpolation
+    float tt = t * t;
+
+    float q1 = -6.0f * tt + 4 * t - 1;
+    float q2 = 9.0f * tt - 10.0f * t;
+    float q3 = -9.0f * tt + 8.0f * t + 1.0f;
+    float q4 = 3.0f * tt - 2.0f * t;
+
+    float tx = 0.5f * (trackPoints[p0].x * q1 + trackPoints[p1].x * q2 + trackPoints[p2].x * q3 + trackPoints[p3].x * q4);
+    float ty = 0.5f * (trackPoints[p0].y * q1 + trackPoints[p1].y * q2 + trackPoints[p2].y * q3 + trackPoints[p3].y * q4);
+
+    return {tx, ty};
 }
 
 void Track::changeTrackPointValues(std::string dir, int num)

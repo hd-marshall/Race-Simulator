@@ -26,12 +26,14 @@ Notes for Development:
         - SFML library included
         - Make file completed
         - Add a background in SFML
-
+        - Create the track layout
+        - Track points working from the object
+        - Using splines ot create the edges between the vertices
+        - Move nodes with keyboard
 
     Current in head thoughts:
-        - Create the track layout
-            - Track points working from the object
-        - Using splines ot create the edges between the vertices
+        - ReDo code to make all the calls of the track to change the private class
+        - create a make track visuals file to make the visual loop simpler
         - Add in a move the nodes with drag feature
 
     Weaknesses to improve on:
