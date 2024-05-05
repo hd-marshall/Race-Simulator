@@ -33,8 +33,6 @@ Notes for Development:
             - Track points working from the object
         - Using splines ot create the edges between the vertices
         - Add in a move the nodes with drag feature
-            - Add in a selected Node to the track Object
-
 
     Weaknesses to improve on:
         - learn make files (better)

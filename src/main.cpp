@@ -1,26 +1,39 @@
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include "../include/Track.h"
+
+#include <iostream>
+
+#include <SFML/Graphics.hpp>
+#include <cmath>
 #include "../include/Track.h"
 
 Track createTrackObject()
 {
-    Track monacoTrack("Monaco");
+    Track track("test");
 
+    // Circle Track
     for (int i = 0; i < 10; ++i)
     {
         double angle = 2 * M_PI * i / 10;
         int x = static_cast<int>(570 + 200 * cos(angle));
         int y = static_cast<int>(400 + 200 * sin(angle));
-        monacoTrack.addTrackPoint(x, y);
+        track.addTrackPoint(x, y);
     }
 
-    return monacoTrack;
+    // Line Track
+    // for (int i = 400; i <= 900; i += 100)
+    // {
+    //     monacoTrack.addTrackPoint(i, 400);
+    // }
+
+    return track;
 }
 
-sf::RectangleShape createTrackVertexVisuals(Point trackVector, int currentVector, int selectedVector)
+sf::RectangleShape createTrackVertexVisuals(Point &trackVector, int currentVector, int selectedVector)
 {
     sf::RectangleShape road;
-
-    road.setSize(sf::Vector2f(30, 30));             // Set the size of the rectangle
+    road.setSize(sf::Vector2f(25, 25));             // Set the size of the rectangle
     road.setPosition(trackVector.x, trackVector.y); // Set the position of the rectangle
     if (selectedVector != currentVector)
     {
@@ -32,13 +45,19 @@ sf::RectangleShape createTrackVertexVisuals(Point trackVector, int currentVector
     }
     road.setOutlineThickness(5); // Set the thickness of the outline
     road.setOutlineColor(sf::Color(128, 128, 128));
-
     return road;
 }
 
-void moveTrackVertexVisuals(Point &selectedVector)
+void moveTrackVertexVisuals(std::string moveDir, int moveNum, std::vector<Point> &raceTrackVectors, int selectedVector)
 {
-    selectedVector.y += 30;
+    if (moveDir == "y")
+    {
+        raceTrackVectors[selectedVector].y += moveNum;
+    }
+    else
+    {
+        raceTrackVectors[selectedVector].x += moveNum;
+    }
 }
 
 int main()
@@ -49,11 +68,10 @@ int main()
 
     // Create SFML window
     sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
+    sf::Vector2i *mousePosPtr = new sf::Vector2i(sf::Mouse::getPosition(window));
 
-    // Main loop
     while (window.isOpen())
     {
-        // Handle events
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -64,36 +82,60 @@ int main()
 
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
+                *mousePosPtr = sf::Mouse::getPosition(window);
                 for (size_t i = 0; i < raceTrackVectors.size(); i++)
                 {
                     Point &point = raceTrackVectors[i];
-                    int dx = mousePos.x - point.x;
-                    int dy = mousePos.y - point.y;
+                    int dx = mousePosPtr->x - point.x;
+                    int dy = mousePosPtr->y - point.y;
 
-                    // Check if the mouse position is within a range of 30 pixels from the track point
                     if (dx * dx + dy * dy <= 30 * 30)
                     {
-                        // Perform your action for clicking on the point
-                        moveTrackVertexVisuals(point);
                         selectedVertex = i;
                     }
                 }
             }
 
-            // Draw Background
-            window.clear(sf::Color::Green);
-
-            for (size_t i = 0; i < raceTrackVectors.size(); i++)
+            if (selectedVertex != -1 && event.type == sf::Event::KeyPressed)
             {
-                // Draw vector of points
-                window.draw(createTrackVertexVisuals(raceTrackVectors[i], i, selectedVertex));
+                if (event.key.code == sf::Keyboard::W)
+                {
+                    moveTrackVertexVisuals("y", -10, raceTrackVectors, selectedVertex);
+                }
+                else if (event.key.code == sf::Keyboard::S)
+                {
+                    moveTrackVertexVisuals("y", 10, raceTrackVectors, selectedVertex);
+                }
+                else if (event.key.code == sf::Keyboard::A)
+                {
+                    moveTrackVertexVisuals("x", -10, raceTrackVectors, selectedVertex);
+                }
+                else if (event.key.code == sf::Keyboard::D)
+                {
+                    moveTrackVertexVisuals("x", 10, raceTrackVectors, selectedVertex);
+                }
             }
-
-            // Display the window
-            window.display();
         }
+
+        window.clear(sf::Color::Green);
+
+        // Draw track vertices
+        for (size_t i = 0; i < raceTrackVectors.size(); i++)
+        {
+            window.draw(createTrackVertexVisuals(raceTrackVectors[i], i, selectedVertex));
+        }
+
+        // Draw track curve
+        for (float t = 0.0f; t < (float)(track.getTrackPoints().size() - 3); t += 0.05f)
+        {
+            Point currentRoad = track.getTrackCurve(t);
+            sf::RectangleShape pixel(sf::Vector2f(5, 5));
+            pixel.setPosition(currentRoad.x, currentRoad.y);
+            pixel.setFillColor(sf::Color::Red);
+            window.draw(pixel);
+        }
+
+        window.display();
     }
 
     return 0;

@@ -16,18 +16,19 @@ class Track
 private:
     std::string name;
     std::vector<Point> trackPoints; // Points defining the track boundary
-    int selectedTrackPoint = 0;
 
 public:
     // Constructor
     Track(const std::string &name);
 
     // Accessors
-    const std::string& getTrackName() const;
+    const std::string &getTrackName() const;
 
-    const Point& getSpecificTrackPoint(int num) const;
+    const Point &getSpecificTrackPoint(int num) const;
 
-    const std::vector<Point>& getTrackPoints() const;
+    const std::vector<Point> &getTrackPoints() const;
+
+    Point getTrackCurve(float t) const;
 
     // Setters
     void addTrackPoint(double x, double y);
