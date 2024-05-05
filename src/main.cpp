@@ -1,12 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include "../include/Track.h"
 
 #include <iostream>
-
-#include <SFML/Graphics.hpp>
 #include <cmath>
-#include "../include/Track.h"
 
 Track createTrackObject()
 {
@@ -48,22 +44,9 @@ sf::RectangleShape createTrackVertexVisuals(Point &trackVector, int currentVecto
     return road;
 }
 
-void moveTrackVertexVisuals(std::string moveDir, int moveNum, std::vector<Point> &raceTrackVectors, int selectedVector)
-{
-    if (moveDir == "y")
-    {
-        raceTrackVectors[selectedVector].y += moveNum;
-    }
-    else
-    {
-        raceTrackVectors[selectedVector].x += moveNum;
-    }
-}
-
 int main()
 {
     Track track = createTrackObject();
-    std::vector<Point> raceTrackVectors = track.getTrackPoints();
     int selectedVertex = -1;
 
     // Create SFML window
@@ -72,6 +55,7 @@ int main()
 
     while (window.isOpen())
     {
+        std::vector<Point> raceTrackVectors = track.getTrackPoints();
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -100,19 +84,19 @@ int main()
             {
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    moveTrackVertexVisuals("y", -10, raceTrackVectors, selectedVertex);
+                    track.changeTrackPointValues("w", selectedVertex);
                 }
                 else if (event.key.code == sf::Keyboard::S)
                 {
-                    moveTrackVertexVisuals("y", 10, raceTrackVectors, selectedVertex);
+                    track.changeTrackPointValues("s", selectedVertex);
                 }
                 else if (event.key.code == sf::Keyboard::A)
                 {
-                    moveTrackVertexVisuals("x", -10, raceTrackVectors, selectedVertex);
+                    track.changeTrackPointValues("a", selectedVertex);
                 }
                 else if (event.key.code == sf::Keyboard::D)
                 {
-                    moveTrackVertexVisuals("x", 10, raceTrackVectors, selectedVertex);
+                    track.changeTrackPointValues("d", selectedVertex);
                 }
             }
         }
@@ -122,7 +106,8 @@ int main()
         // Draw track vertices
         for (size_t i = 0; i < raceTrackVectors.size(); i++)
         {
-            window.draw(createTrackVertexVisuals(raceTrackVectors[i], i, selectedVertex));
+            std::vector<Point> newTrack = track.getTrackPoints();
+            window.draw(createTrackVertexVisuals(newTrack[i], i, selectedVertex));
         }
 
         // Draw track curve

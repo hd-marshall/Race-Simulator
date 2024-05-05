@@ -32,6 +32,8 @@ public:
 
     // Setters
     void addTrackPoint(double x, double y);
+
+    void changeTrackPointValues(std::string dir, int num);
 };
 
 #endif // TRACK_H

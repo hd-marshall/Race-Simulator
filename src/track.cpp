@@ -84,3 +84,23 @@ void Track::addTrackPoint(double x, double y)
 {
     this->trackPoints.push_back({x, y});
 }
+
+void Track::changeTrackPointValues(std::string dir, int num)
+{
+    if (dir == "w")
+    {
+        this->trackPoints[num].y += -10;
+    }
+    else if (dir == "s")
+    {
+        this->trackPoints[num].y += 10;
+    }
+    else if (dir == "a")
+    {
+        this->trackPoints[num].x += -10;
+    }
+    else
+    {
+        this->trackPoints[num].x += 10;
+    }
+}
