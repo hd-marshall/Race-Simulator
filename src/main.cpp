@@ -46,8 +46,8 @@ sf::RectangleShape createTrackPointVisuals(Point &trackVector, int currentVector
 
 sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
 {
-    sf::RectangleShape roadVisual(sf::Vector2f(5, 5));
-    roadVisual.setPosition(roadPoint.x, roadPoint.y);
+    sf::RectangleShape roadVisual(sf::Vector2f(25, 25));
+    roadVisual.setPosition(roadPoint.x - 10, roadPoint.y - 10);
     roadVisual.setFillColor(sf::Color(128, 128, 128));
 
     return roadVisual;
@@ -55,10 +55,16 @@ sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
 
 sf::ConvexShape createCarVisuals(Point carPoint)
 {
+    // sf::RectangleShape roadVisual(sf::Vector2f(25, 25));
+    // roadVisual.setPosition(roadPoint.x - 10, roadPoint.y - 10);
+    // roadVisual.setFillColor(sf::Color(128, 128, 128));
+
+    // return roadVisual;
+
     // Define the points of the triangle
-    sf::Vector2f point1(carPoint.x + 4, carPoint.x);
-    sf::Vector2f point2(carPoint.x + 8, carPoint.x);
-    sf::Vector2f point3(carPoint.x + 6, carPoint.x + 6);
+    sf::Vector2f point1(carPoint.x + 8, carPoint.y);
+    sf::Vector2f point2(carPoint.x + 16, carPoint.y);
+    sf::Vector2f point3(carPoint.x + 12, carPoint.y + 12);
 
     // Create a triangle shape
     sf::ConvexShape carShape;
@@ -114,19 +120,28 @@ int main()
             {
                 if (event.key.code == sf::Keyboard::W)
                 {
-                    track.changeTrackPointValues("w", selectedPoint);
+                    track.setTrackPointValues("w", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::S)
                 {
-                    track.changeTrackPointValues("s", selectedPoint);
+                    track.setTrackPointValues("s", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::A)
                 {
-                    track.changeTrackPointValues("a", selectedPoint);
+                    track.setTrackPointValues("a", selectedPoint);
                 }
                 else if (event.key.code == sf::Keyboard::D)
                 {
-                    track.changeTrackPointValues("d", selectedPoint);
+                    track.setTrackPointValues("d", selectedPoint);
+                }
+            }
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Space)
+                {
+                    float currentCarDir = track.getCar().getCarDirection();
+                    track.getCar().setCarDirection(currentCarDir + 5.0f);
                 }
             }
         }
@@ -138,13 +153,18 @@ int main()
         {
             Point roadPoint = track.getTrackCurvePoint(t, true);
             window.draw(createTrackRoadVisuals(roadPoint));
-            window.draw(createCarVisuals(roadPoint));
         }
 
         // Draw track vertices
         for (size_t i = 0; i < raceTrackPoints.size(); i++)
         {
             window.draw(createTrackPointVisuals(raceTrackPoints[i], i, selectedPoint));
+        }
+
+        for (float t = 0.0f; t < (float)(raceTrackPoints.size()); t += 0.01f)
+        {
+            Point roadPoint = track.getTrackCurvePoint(t, true);
+            window.draw(createCarVisuals(roadPoint));
         }
 
         window.display();

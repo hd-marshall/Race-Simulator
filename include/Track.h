@@ -29,13 +29,14 @@ public:
     const std::string &getTrackName() const;
     const Point &getSpecificTrackPoint(int num) const;
     const std::vector<Point> &getTrackPoints() const;
-    const Car &getCar() const;
+    Car &getCar();
 
     Point getTrackCurvePoint(float t, bool looped) const;
     Point getTrackCurveGradient(float t, bool looped = false) const;
 
     // Setters
-    void changeTrackPointValues(std::string dir, int num);
+    void setCar(Car &car);
+    void setTrackPointValues(std::string dir, int num);
 };
 
 #endif // TRACK_H

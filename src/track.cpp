@@ -4,7 +4,10 @@
 
 // Constructor
 Track::Track(const std::string &name)
-    : name(name) {}
+{
+    this->name = name;
+    this->car = Car();
+}
 
 void Track::addTrackPoint(double x, double y)
 {
@@ -27,7 +30,7 @@ const Point &Track::getSpecificTrackPoint(int num) const
     return this->trackPoints[num];
 }
 
-const Car &Track::getCar() const
+Car &Track::getCar()
 {
     return this->car;
 }
@@ -113,7 +116,12 @@ Point Track::getTrackCurveGradient(float t, bool looped) const
     return {tx, ty};
 }
 
-void Track::changeTrackPointValues(std::string dir, int num)
+void Track::setCar(Car &car)
+{
+    this->car = car;
+}
+
+void Track::setTrackPointValues(std::string dir, int num)
 {
     if (dir == "w")
     {

@@ -1,11 +1,11 @@
 #include "../include/Car.h"
 
 // Default constructor
-Car::Car() : carDirection(0.0) {}
+Car::Car() : carPos({100, 100}), carDirection(0.0) {}
 
 // Parameterized constructor
-Car::Car(const std::string &carName, float base, float diameter, double fuel, double direction)
-    : name(carName), wheelBase(base), tireDiameter(diameter), fuelLevel(fuel), carDirection(direction) {}
+Car::Car(const std::string &carName, float base, float diameter, double fuel, CarPoint pos, double direction)
+    : name(carName), wheelBase(base), tireDiameter(diameter), fuelLevel(fuel), carPos(pos), carDirection(direction) {}
 
 // Accessors
 std::string Car::getName() const
@@ -28,6 +28,11 @@ double Car::getFuelLevel() const
     return this->fuelLevel;
 }
 
+CarPoint Car::getCarPos() const
+{
+    return this->carPos;
+}
+
 double Car::getCarDirection() const
 {
     return this->carDirection;
@@ -39,19 +44,14 @@ void Car::setName(const std::string str)
     this->name = str;
 }
 
-void Car::getWheelBase(double num)
+void Car::setWheelBase(double num)
 {
     this->wheelBase = num;
 }
 
-void Car::getTireDiameter(double num)
+void Car::setTireDiameter(double num)
 {
     this->tireDiameter = num;
-}
-
-void Car::getFuelLevel(double num)
-{
-    this->fuelLevel = num;
 }
 
 void Car::setFuelLevel(double num)
@@ -59,7 +59,12 @@ void Car::setFuelLevel(double num)
     this->fuelLevel = num;
 }
 
-void Car::getCarDirection(double num)
+void Car::setCarPos(CarPoint num)
+{
+    this->carPos = num;
+}
+
+void Car::setCarDirection(double num)
 {
     this->carDirection = num;
 }
