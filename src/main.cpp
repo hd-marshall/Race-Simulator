@@ -134,24 +134,21 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
-                Point g1 = track.getTrackCurvePoint(carCircuitDist, true);
-                Point g2 = track.getTrackCurveGradient(carCircuitDist, true);
+                Point p1 = track.getTrackCurvePoint(carCircuitDist, true);
+                Point g1 = track.getTrackCurveGradient(carCircuitDist, true);
 
-                // std::cout << g1.x << g1.y << std::endl;
-                // std::cout << g2.x << g2.y << std::endl;
+                float r = atan2(-g1.y, g1.x);
+                // carDirection = (5.0f * sin(r) + p1.x, 5.0f * cos(r) + p1.y, -5.0f * sin(r) + p1.x, )
 
-                float angle_rad = atan2(g2.y - g1.y, g2.x - g1.x);
-                carDirection = angle_rad * 180 / M_PI;
+                track.getCar().setCarDirection(abs(r));
+                track.getCar().setCarPos({p1.x, p1.y});
 
-                track.getCar().setCarDirection(carDirection);
-                track.getCar().setCarPos({g1.x, g1.y});
+                carCircuitDist += 0.15f;
 
                 if (carCircuitDist > float(raceTrackPointSize))
                 {
                     carCircuitDist -= float(raceTrackPointSize);
                 }
-
-                carCircuitDist += 0.10f;
             }
         }
 
