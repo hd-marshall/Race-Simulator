@@ -17,12 +17,12 @@ private:
     float tireDiameter;
     double fuelLevel;
     CarPoint carPos;
-    double carDirection;
+    float carDirection;
 
 public:
     // Constructors
     Car();
-    Car(const std::string &carName, float base, float diameter, double fuel, CarPoint pos, double direction);
+    Car(const std::string &carName, float base, float diameter, double fuel, CarPoint pos, float direction);
 
     // Accessors
     std::string getName() const;
@@ -30,7 +30,7 @@ public:
     double getTireDiameter() const;
     double getFuelLevel() const;
     CarPoint getCarPos() const;
-    double getCarDirection() const;
+    float getCarDirection() const;
 
     // Mutators
     void setName(const std::string str);
@@ -38,7 +38,7 @@ public:
     void setTireDiameter(double num);
     void setFuelLevel(double num);
     void setCarPos(CarPoint num);
-    void setCarDirection(double num);
+    void setCarDirection(float num);
 };
 
 #endif // CAR_H

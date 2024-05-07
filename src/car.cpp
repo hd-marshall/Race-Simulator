@@ -1,10 +1,10 @@
 #include "../include/Car.h"
 
 // Default constructor
-Car::Car() : carPos({100, 100}), carDirection(0.0) {}
+Car::Car() : carPos({100, 100}), carDirection(0.0f) {}
 
 // Parameterized constructor
-Car::Car(const std::string &carName, float base, float diameter, double fuel, CarPoint pos, double direction)
+Car::Car(const std::string &carName, float base, float diameter, double fuel, CarPoint pos, float direction)
     : name(carName), wheelBase(base), tireDiameter(diameter), fuelLevel(fuel), carPos(pos), carDirection(direction) {}
 
 // Accessors
@@ -33,7 +33,7 @@ CarPoint Car::getCarPos() const
     return this->carPos;
 }
 
-double Car::getCarDirection() const
+float Car::getCarDirection() const
 {
     return this->carDirection;
 }
@@ -64,7 +64,7 @@ void Car::setCarPos(CarPoint num)
     this->carPos = num;
 }
 
-void Car::setCarDirection(double num)
+void Car::setCarDirection(float num)
 {
     this->carDirection = num;
 }

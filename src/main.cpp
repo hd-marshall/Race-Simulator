@@ -29,17 +29,17 @@ Track createTrackObject()
 sf::RectangleShape createTrackPointVisuals(Point &trackVector, int currentVector, int selectedVector)
 {
     sf::RectangleShape road;
-    road.setSize(sf::Vector2f(10, 10));             // Set the size of the rectangle
-    road.setPosition(trackVector.x, trackVector.y); // Set the position of the rectangle
+    road.setSize(sf::Vector2f(10, 10));
+    road.setPosition(trackVector.x, trackVector.y);
     if (selectedVector != currentVector)
     {
-        road.setFillColor(sf::Color::Black); // Set the fill color of the rectangle
+        road.setFillColor(sf::Color::Black);
     }
     else
     {
-        road.setFillColor(sf::Color::Red); // Set the fill color of the rectangle
+        road.setFillColor(sf::Color::Red);
     }
-    road.setOutlineThickness(3); // Set the thickness of the outline
+    road.setOutlineThickness(3);
     road.setOutlineColor(sf::Color(128, 128, 128));
     return road;
 }
@@ -53,36 +53,30 @@ sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
     return roadVisual;
 }
 
-sf::ConvexShape createCarVisuals(Point carPoint)
+sf::RectangleShape createCarVisuals(CarPoint carPoint, float carDir)
 {
-    // sf::RectangleShape roadVisual(sf::Vector2f(25, 25));
-    // roadVisual.setPosition(roadPoint.x - 10, roadPoint.y - 10);
-    // roadVisual.setFillColor(sf::Color(128, 128, 128));
+    sf::RectangleShape carVisual(sf::Vector2f(18, 10));
+    carVisual.setPosition(carPoint.x, carPoint.y);
+    carVisual.setFillColor(sf::Color::Blue);
+    carVisual.rotate(carDir - 80.0f);
 
-    // return roadVisual;
-
-    // Define the points of the triangle
-    sf::Vector2f point1(carPoint.x + 8, carPoint.y);
-    sf::Vector2f point2(carPoint.x + 16, carPoint.y);
-    sf::Vector2f point3(carPoint.x + 12, carPoint.y + 12);
-
-    // Create a triangle shape
-    sf::ConvexShape carShape;
-    carShape.setPointCount(3); // Set the number of points
-    carShape.setPoint(0, point1);
-    carShape.setPoint(1, point2);
-    carShape.setPoint(2, point3);
-
-    // Set the triangle's fill color
-    carShape.setFillColor(sf::Color::Red);
-
-    return carShape;
+    return carVisual;
 }
 
 int main()
 {
+    // Create track object and place the car to the inital point on the circuit
     Track track = createTrackObject();
     std::vector<Point> raceTrackPoints = track.getTrackPoints();
+    size_t raceTrackPointSize = raceTrackPoints.size();
+
+    track.getCar().setCarPos({raceTrackPoints[0].x, raceTrackPoints[0].y});
+
+    // Logic for the car movement
+    float carCircuitDist = 0.0f;
+    float carDirection = 0.0f;
+
+    // Used for moving the track into different shapes
     int selectedPoint = -1;
 
     // Create SFML window
@@ -91,7 +85,9 @@ int main()
 
     while (window.isOpen())
     {
+        // Fill vector with updated Points of the track for the visual function
         raceTrackPoints = track.getTrackPoints();
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -103,7 +99,7 @@ int main()
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
                 *mousePosPtr = sf::Mouse::getPosition(window);
-                for (size_t i = 0; i < raceTrackPoints.size(); i++)
+                for (size_t i = 0; i < raceTrackPointSize; i++)
                 {
                     Point &point = raceTrackPoints[i];
                     int dx = mousePosPtr->x - point.x;
@@ -136,36 +132,45 @@ int main()
                 }
             }
 
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
-                if (event.key.code == sf::Keyboard::Space)
+                Point g1 = track.getTrackCurvePoint(carCircuitDist, true);
+                Point g2 = track.getTrackCurveGradient(carCircuitDist, true);
+
+                // std::cout << g1.x << g1.y << std::endl;
+                // std::cout << g2.x << g2.y << std::endl;
+
+                float angle_rad = atan2(g2.y - g1.y, g2.x - g1.x);
+                carDirection = angle_rad * 180 / M_PI;
+
+                track.getCar().setCarDirection(carDirection);
+                track.getCar().setCarPos({g1.x, g1.y});
+
+                if (carCircuitDist > float(raceTrackPointSize))
                 {
-                    float currentCarDir = track.getCar().getCarDirection();
-                    track.getCar().setCarDirection(currentCarDir + 5.0f);
+                    carCircuitDist -= float(raceTrackPointSize);
                 }
+
+                carCircuitDist += 0.10f;
             }
         }
 
         window.clear(sf::Color::Green);
 
         // Draw track curve
-        for (float t = 0.0f; t < (float)(raceTrackPoints.size()); t += 0.01f)
+        for (float t = 0.0f; t < (float)(raceTrackPointSize); t += 0.01f)
         {
             Point roadPoint = track.getTrackCurvePoint(t, true);
             window.draw(createTrackRoadVisuals(roadPoint));
         }
 
         // Draw track vertices
-        for (size_t i = 0; i < raceTrackPoints.size(); i++)
+        for (size_t i = 0; i < raceTrackPointSize; i++)
         {
             window.draw(createTrackPointVisuals(raceTrackPoints[i], i, selectedPoint));
         }
 
-        for (float t = 0.0f; t < (float)(raceTrackPoints.size()); t += 0.01f)
-        {
-            Point roadPoint = track.getTrackCurvePoint(t, true);
-            window.draw(createCarVisuals(roadPoint));
-        }
+        window.draw(createCarVisuals(track.getCar().getCarPos(), carDirection));
 
         window.display();
     }
