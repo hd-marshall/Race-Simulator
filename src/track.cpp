@@ -1,7 +1,5 @@
 #include "../include/Track.h"
 
-#include <iostream>
-
 // Constructor
 Track::Track(const std::string &name)
 {
@@ -76,7 +74,7 @@ Point Track::getTrackCurvePoint(float t, bool looped = false) const
     return {tx, ty};
 }
 
-Point Track::getTrackCurveGradient(float t, bool looped = false) const
+Point Track::getTrackCurveGradient(float t, bool looped) const
 {
     int p0, p1, p2, p3;
 

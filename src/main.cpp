@@ -73,10 +73,8 @@ int main()
     size_t raceTrackPointSize = raceTrackPoints.size();
 
     track.getCar().setCarPos({raceTrackPoints[0].x, raceTrackPoints[0].y});
-
     // Logic for the car movement
     float carCircuitDist = 0.0f;
-
     // Used for moving the track into different shapes
     int selectedPoint = -1;
 
@@ -97,6 +95,7 @@ int main()
                 window.close();
             }
 
+            // * Select a point
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
                 *mousePosPtr = sf::Mouse::getPosition(window);
@@ -113,6 +112,7 @@ int main()
                 }
             }
 
+            // * Move selected point
             if (selectedPoint != -1 && event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::W)
@@ -133,6 +133,7 @@ int main()
                 }
             }
 
+            // * Car direction logic
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
                 if (carCircuitDist > float(raceTrackPointSize))
@@ -147,25 +148,26 @@ int main()
                 track.getCar().setCarDirection(atan2(g1.y, g1.x) * 180 / M_PI);
                 track.getCar().setCarPos({p1.x, p1.y});
 
-                carCircuitDist += 0.10f;
+                carCircuitDist += 0.15f;
             }
         }
 
         window.clear(sf::Color::Green);
 
-        // Draw track curve
+        // * Draw track curve
         for (float t = 0.0f; t < (float)(raceTrackPointSize); t += 0.01f)
         {
             Point roadPoint = track.getTrackCurvePoint(t, true);
             window.draw(createTrackRoadVisuals(roadPoint));
         }
 
-        // Draw track vertices
+        // * Draw track points
         for (size_t i = 0; i < raceTrackPointSize; i++)
         {
             window.draw(createTrackPointVisuals(raceTrackPoints[i], i, selectedPoint));
         }
 
+        // * Draw the car
         window.draw(createCarVisuals(track.getCar()));
 
         window.display();
