@@ -46,19 +46,21 @@ sf::RectangleShape createTrackPointVisuals(Point &trackVector, int currentVector
 
 sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
 {
-    sf::RectangleShape roadVisual(sf::Vector2f(25, 25));
-    roadVisual.setPosition(roadPoint.x - 10, roadPoint.y - 10);
+    sf::RectangleShape roadVisual(sf::Vector2f(35, 35));
+    roadVisual.setPosition(roadPoint.x - 15, roadPoint.y - 15);
     roadVisual.setFillColor(sf::Color(128, 128, 128));
 
     return roadVisual;
 }
 
-sf::RectangleShape createCarVisuals(CarPoint carPoint, float carDir)
+sf::RectangleShape createCarVisuals(Car car)
 {
+    CarPoint carPos = car.getCarPos();
+
     sf::RectangleShape carVisual(sf::Vector2f(18, 10));
-    carVisual.setPosition(carPoint.x, carPoint.y);
+    carVisual.setPosition(carPos.x, carPos.y);
     carVisual.setFillColor(sf::Color::Blue);
-    carVisual.rotate(carDir - 80.0f);
+    carVisual.rotate(car.getCarDirection());
 
     return carVisual;
 }
@@ -74,7 +76,6 @@ int main()
 
     // Logic for the car movement
     float carCircuitDist = 0.0f;
-    float carDirection = 0.0f;
 
     // Used for moving the track into different shapes
     int selectedPoint = -1;
@@ -134,21 +135,19 @@ int main()
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
             {
-                Point p1 = track.getTrackCurvePoint(carCircuitDist, true);
-                Point g1 = track.getTrackCurveGradient(carCircuitDist, true);
-
-                float r = atan2(-g1.y, g1.x);
-                // carDirection = (5.0f * sin(r) + p1.x, 5.0f * cos(r) + p1.y, -5.0f * sin(r) + p1.x, )
-
-                track.getCar().setCarDirection(abs(r));
-                track.getCar().setCarPos({p1.x, p1.y});
-
-                carCircuitDist += 0.15f;
-
                 if (carCircuitDist > float(raceTrackPointSize))
                 {
                     carCircuitDist -= float(raceTrackPointSize);
                 }
+
+                Point p1 = track.getTrackCurvePoint(carCircuitDist, true);
+                Point g1 = track.getTrackCurveGradient(carCircuitDist, true);
+
+                // Convert the point in radians and then degrees for the visual
+                track.getCar().setCarDirection(atan2(g1.y, g1.x) * 180 / M_PI);
+                track.getCar().setCarPos({p1.x, p1.y});
+
+                carCircuitDist += 0.10f;
             }
         }
 
@@ -167,7 +166,7 @@ int main()
             window.draw(createTrackPointVisuals(raceTrackPoints[i], i, selectedPoint));
         }
 
-        window.draw(createCarVisuals(track.getCar().getCarPos(), carDirection));
+        window.draw(createCarVisuals(track.getCar()));
 
         window.display();
     }

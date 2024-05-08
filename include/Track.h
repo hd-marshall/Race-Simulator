@@ -19,7 +19,7 @@ private:
     std::string name;
     std::vector<Point> trackPoints; // Points defining the track boundary
     Car car;
-    
+
 public:
     // Constructor
     Track(const std::string &name);

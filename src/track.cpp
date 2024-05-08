@@ -76,7 +76,7 @@ Point Track::getTrackCurvePoint(float t, bool looped = false) const
     return {tx, ty};
 }
 
-Point Track::getTrackCurveGradient(float t, bool looped) const
+Point Track::getTrackCurveGradient(float t, bool looped = false) const
 {
     int p0, p1, p2, p3;
 
@@ -105,7 +105,7 @@ Point Track::getTrackCurveGradient(float t, bool looped) const
     // Calculate the curve using Catmull-Rom interpolation
     float tt = t * t;
 
-    float q1 = -6.0f * tt + 4 * t - 1;
+    float q1 = -3.0f * tt + 4 * t - 1.0f;
     float q2 = 9.0f * tt - 10.0f * t;
     float q3 = -9.0f * tt + 8.0f * t + 1.0f;
     float q4 = 3.0f * tt - 2.0f * t;
