@@ -6,12 +6,12 @@
 
 Track createTrackObject()
 {
-    Track track("test");
+    Track track("Custom Circuit");
 
     // Circle Track
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 12; ++i)
     {
-        double angle = 2 * M_PI * i / 10;
+        double angle = 2 * M_PI * i / 12;
         int x = static_cast<int>(570 + 200 * cos(angle));
         int y = static_cast<int>(400 + 200 * sin(angle));
         track.addTrackPoint(x, y);
@@ -26,27 +26,30 @@ Track createTrackObject()
     return track;
 }
 
-sf::RectangleShape createTrackPointVisuals(Point &trackVector, int currentVector, int selectedVector)
+sf::RectangleShape createTrackPointVisuals(Point &trackPoint, int pointIndex, int selectedPointIndex)
 {
-    sf::RectangleShape road;
-    road.setSize(sf::Vector2f(10, 10));
-    road.setPosition(trackVector.x, trackVector.y);
-    if (selectedVector != currentVector)
+    sf::RectangleShape roadPointVisual;
+    roadPointVisual.setSize(sf::Vector2f(10, 10));
+    roadPointVisual.setPosition(trackPoint.x, trackPoint.y);
+    roadPointVisual.setOutlineThickness(3);
+    roadPointVisual.setOutlineColor(sf::Color(0, 0, 0));
+
+    if (selectedPointIndex != pointIndex)
     {
-        road.setFillColor(sf::Color::Black);
+        roadPointVisual.setFillColor(sf::Color::Black);
     }
     else
     {
-        road.setFillColor(sf::Color::Red);
+        roadPointVisual.setFillColor(sf::Color(255, 255, 255));
     }
-    road.setOutlineThickness(3);
-    road.setOutlineColor(sf::Color(128, 128, 128));
-    return road;
+
+    return roadPointVisual;
 }
 
 sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
 {
-    sf::RectangleShape roadVisual(sf::Vector2f(35, 35));
+    sf::RectangleShape roadVisual;
+    roadVisual.setSize(sf::Vector2f(35, 35));
     roadVisual.setPosition(roadPoint.x - 15, roadPoint.y - 15);
     roadVisual.setFillColor(sf::Color(128, 128, 128));
 
@@ -55,28 +58,63 @@ sf::RectangleShape createTrackRoadVisuals(Point roadPoint)
 
 sf::RectangleShape createCarVisuals(Car car)
 {
-    CarPoint carPos = car.getCarPos();
+    CarPoint carPos = car.getPosition();
 
-    sf::RectangleShape carVisual(sf::Vector2f(18, 10));
+    sf::RectangleShape carVisual;
+    carVisual.setSize(sf::Vector2f(18, 10));
     carVisual.setPosition(carPos.x, carPos.y);
     carVisual.setFillColor(sf::Color::Blue);
-    carVisual.rotate(car.getCarDirection());
+    carVisual.rotate(car.getDirection());
 
     return carVisual;
+}
+
+std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(bool status)
+{
+    std::vector<std::unique_ptr<sf::Drawable>> shapes;
+
+    // Create some shapes and add them to the vector
+    std::unique_ptr<sf::RectangleShape> header = std::make_unique<sf::RectangleShape>(sf::Vector2f(200, 25));
+    header->setPosition(25, 25);
+    header->setFillColor(sf::Color::White);
+    header->setOutlineThickness(3);
+    header->setOutlineColor(sf::Color(0, 0, 0));
+    shapes.push_back(std::move(header));
+
+    std::unique_ptr<sf::RectangleShape> closeB = std::make_unique<sf::RectangleShape>(sf::Vector2f(20, 20));
+    closeB->setPosition(200, 27);
+    closeB->setFillColor(sf::Color::Red);
+    shapes.push_back(std::move(closeB));
+
+    if (status)
+    {
+        std::unique_ptr<sf::RectangleShape> rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f(200, 250));
+        rectangle->setPosition(25, 53);
+        rectangle->setFillColor(sf::Color::White);
+        rectangle->setOutlineThickness(3);
+        rectangle->setOutlineColor(sf::Color(0, 0, 0));
+        shapes.push_back(std::move(rectangle));
+    }
+
+    return shapes;
 }
 
 int main()
 {
     // Create track object and place the car to the inital point on the circuit
     Track track = createTrackObject();
+
+    // Used for moving the track into different shapes
+    int selectedPoint = -1;
     std::vector<Point> raceTrackPoints = track.getTrackPoints();
     size_t raceTrackPointSize = raceTrackPoints.size();
 
-    track.getCar().setCarPos({raceTrackPoints[0].x, raceTrackPoints[0].y});
     // Logic for the car movement
     float carCircuitDist = 0.0f;
-    // Used for moving the track into different shapes
-    int selectedPoint = -1;
+    track.getCar().setPosition({raceTrackPoints[0].x, raceTrackPoints[0].y});
+
+    // Menu status
+    bool menuStatus = true;
 
     // Create SFML window
     sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
@@ -98,6 +136,17 @@ int main()
             // * Select a point
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
             {
+                // Check if the click is on the close button
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                sf::FloatRect closeButtonBounds(200, 27, 20, 20);
+
+                if (closeButtonBounds.contains(mousePos.x, mousePos.y))
+                {
+                    // Toggle the menuStatus
+                    menuStatus = !menuStatus;
+                }
+
+                // Check for point selection
                 *mousePosPtr = sf::Mouse::getPosition(window);
                 for (size_t i = 0; i < raceTrackPointSize; i++)
                 {
@@ -145,14 +194,14 @@ int main()
                 Point g1 = track.getTrackCurveGradient(carCircuitDist, true);
 
                 // Convert the point in radians and then degrees for the visual
-                track.getCar().setCarDirection(atan2(g1.y, g1.x) * 180 / M_PI);
-                track.getCar().setCarPos({p1.x, p1.y});
+                track.getCar().setDirection(atan2(g1.y, g1.x) * 180 / M_PI);
+                track.getCar().setPosition({p1.x, p1.y});
 
                 carCircuitDist += 0.15f;
             }
         }
 
-        window.clear(sf::Color::Green);
+        window.clear(sf::Color::White);
 
         // * Draw track curve
         for (float t = 0.0f; t < (float)(raceTrackPointSize); t += 0.01f)
@@ -169,6 +218,12 @@ int main()
 
         // * Draw the car
         window.draw(createCarVisuals(track.getCar()));
+
+        // * Draw time board
+        for (const auto &shape : createTimeBoard(menuStatus))
+        {
+            window.draw(*shape);
+        }
 
         window.display();
     }

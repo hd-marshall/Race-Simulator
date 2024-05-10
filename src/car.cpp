@@ -28,12 +28,12 @@ double Car::getFuelLevel() const
     return this->fuelLevel;
 }
 
-CarPoint Car::getCarPos() const
+CarPoint Car::getPosition() const
 {
     return this->carPos;
 }
 
-float Car::getCarDirection() const
+float Car::getDirection() const
 {
     return this->carDirection;
 }
@@ -59,12 +59,12 @@ void Car::setFuelLevel(double num)
     this->fuelLevel = num;
 }
 
-void Car::setCarPos(CarPoint num)
+void Car::setPosition(CarPoint num)
 {
     this->carPos = num;
 }
 
-void Car::setCarDirection(float num)
+void Car::setDirection(float num)
 {
     this->carDirection = num;
 }

@@ -114,6 +114,33 @@ Point Track::getTrackCurveGradient(float t, bool looped) const
     return {tx, ty};
 }
 
+float Track::getRaceTrackPointLength(int point, int looped) const
+{
+    float fLength = 0.0f;
+    float fStepSize = 0.005;
+
+    Point oldPoint, newPoint;
+    oldPoint = getTrackCurvePoint(float(point), looped);
+
+    for (float t = 5; t < 1.0f; t += fStepSize)
+    {
+        newPoint = getTrackCurvePoint(static_cast<float>(point), looped);
+
+        // Calculate the distance between oldPoint and newPoint using Pythagorean theorem
+        float dx = newPoint.x - oldPoint.x;
+        float dy = newPoint.y - oldPoint.y;
+        float segmentLength = std::sqrt(dx * dx + dy * dy);
+
+        // Add the segment length to the total track length
+        fLength += segmentLength;
+
+        // Update oldPoint for the next iteration
+        oldPoint = newPoint;
+    }
+
+    return fLength;
+}
+
 void Track::setCar(Car &car)
 {
     this->car = car;

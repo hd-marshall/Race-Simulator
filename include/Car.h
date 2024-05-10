@@ -29,16 +29,16 @@ public:
     double getWheelBase() const;
     double getTireDiameter() const;
     double getFuelLevel() const;
-    CarPoint getCarPos() const;
-    float getCarDirection() const;
+    CarPoint getPosition() const;
+    float getDirection() const;
 
     // Mutators
     void setName(const std::string str);
     void setWheelBase(double num);
     void setTireDiameter(double num);
     void setFuelLevel(double num);
-    void setCarPos(CarPoint num);
-    void setCarDirection(float num);
+    void setPosition(CarPoint num);
+    void setDirection(float num);
 };
 
 #endif // CAR_H
