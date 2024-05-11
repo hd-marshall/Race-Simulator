@@ -69,7 +69,7 @@ sf::RectangleShape createCarVisuals(Car car)
     return carVisual;
 }
 
-std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(bool status)
+std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(Car car, bool status, sf::Font &font)
 {
     std::vector<std::unique_ptr<sf::Drawable>> shapes;
 
@@ -86,6 +86,14 @@ std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(bool status)
     closeB->setFillColor(sf::Color::Red);
     shapes.push_back(std::move(closeB));
 
+    sf::Text text;
+    text.setString("Menu");
+    text.setFont(font);
+    text.setCharacterSize(20);
+    text.setFillColor(sf::Color::Black);
+    text.setPosition(28, 25);
+    shapes.push_back(std::make_unique<sf::Text>(text));
+
     if (status)
     {
         std::unique_ptr<sf::RectangleShape> rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f(200, 250));
@@ -94,6 +102,30 @@ std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(bool status)
         rectangle->setOutlineThickness(3);
         rectangle->setOutlineColor(sf::Color(0, 0, 0));
         shapes.push_back(std::move(rectangle));
+
+        sf::Text carVar1;
+        carVar1.setString("Wheel Base:");
+        carVar1.setFont(font);
+        carVar1.setCharacterSize(15);
+        carVar1.setFillColor(sf::Color::Black);
+        carVar1.setPosition(28, 55);
+        shapes.push_back(std::make_unique<sf::Text>(carVar1));
+
+        sf::Text carVar2;
+        carVar2.setString("Fuel Level:");
+        carVar2.setFont(font);
+        carVar2.setCharacterSize(15);
+        carVar2.setFillColor(sf::Color::Black);
+        carVar2.setPosition(28, 75);
+        shapes.push_back(std::make_unique<sf::Text>(carVar2));
+
+        sf::Text text;
+        text.setString("Tire Diameter:");
+        text.setFont(font);
+        text.setCharacterSize(15);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(28, 95);
+        shapes.push_back(std::make_unique<sf::Text>(text));
     }
 
     return shapes;
@@ -119,6 +151,8 @@ int main()
     // Create SFML window
     sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
     sf::Vector2i *mousePosPtr = new sf::Vector2i(sf::Mouse::getPosition(window));
+    sf::Font font;
+    font.loadFromFile("../lib/PixeloidMono.ttf");
 
     while (window.isOpen())
     {
@@ -220,7 +254,7 @@ int main()
         window.draw(createCarVisuals(track.getCar()));
 
         // * Draw time board
-        for (const auto &shape : createTimeBoard(menuStatus))
+        for (const auto &shape : createTimeBoard(track.getCar(), menuStatus, font))
         {
             window.draw(*shape);
         }

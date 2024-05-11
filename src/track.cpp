@@ -165,3 +165,8 @@ void Track::setTrackPointValues(std::string dir, int num)
         this->trackPoints[num].x += 10;
     }
 }
+
+void Track::setTrackPointLengths(float num)
+{
+    this->trackPointLengths[num];
+}
