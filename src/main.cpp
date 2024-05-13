@@ -89,9 +89,9 @@ std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(Car car, bool status,
     sf::Text text;
     text.setString("Menu");
     text.setFont(font);
-    text.setCharacterSize(20);
+    text.setCharacterSize(15);
     text.setFillColor(sf::Color::Black);
-    text.setPosition(28, 25);
+    text.setPosition(30, 30);
     shapes.push_back(std::make_unique<sf::Text>(text));
 
     if (status)
@@ -103,29 +103,29 @@ std::vector<std::unique_ptr<sf::Drawable>> createTimeBoard(Car car, bool status,
         rectangle->setOutlineColor(sf::Color(0, 0, 0));
         shapes.push_back(std::move(rectangle));
 
-        sf::Text carVar1;
-        carVar1.setString("Wheel Base:");
-        carVar1.setFont(font);
-        carVar1.setCharacterSize(15);
-        carVar1.setFillColor(sf::Color::Black);
-        carVar1.setPosition(28, 55);
-        shapes.push_back(std::make_unique<sf::Text>(carVar1));
+        // sf::Text carVar1;
+        // carVar1.setString("Wheel Base:");
+        // carVar1.setFont(font);
+        // carVar1.setCharacterSize(10);
+        // carVar1.setFillColor(sf::Color::Black);
+        // carVar1.setPosition(28, 55);
+        // shapes.push_back(std::make_unique<sf::Text>(carVar1));
 
-        sf::Text carVar2;
-        carVar2.setString("Fuel Level:");
-        carVar2.setFont(font);
-        carVar2.setCharacterSize(15);
-        carVar2.setFillColor(sf::Color::Black);
-        carVar2.setPosition(28, 75);
-        shapes.push_back(std::make_unique<sf::Text>(carVar2));
+        // sf::Text carVar2;
+        // carVar2.setString("Fuel Level:");
+        // carVar2.setFont(font);
+        // carVar2.setCharacterSize(10);
+        // carVar2.setFillColor(sf::Color::Black);
+        // carVar2.setPosition(28, 75);
+        // shapes.push_back(std::make_unique<sf::Text>(carVar2));
 
-        sf::Text text;
-        text.setString("Tire Diameter:");
-        text.setFont(font);
-        text.setCharacterSize(15);
-        text.setFillColor(sf::Color::Black);
-        text.setPosition(28, 95);
-        shapes.push_back(std::make_unique<sf::Text>(text));
+        // sf::Text text;
+        // text.setString("Tire Diameter:");
+        // text.setFont(font);
+        // text.setCharacterSize(10);
+        // text.setFillColor(sf::Color::Black);
+        // text.setPosition(28, 95);
+        // shapes.push_back(std::make_unique<sf::Text>(text));
     }
 
     return shapes;
@@ -152,7 +152,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1200, 800), track.getTrackName());
     sf::Vector2i *mousePosPtr = new sf::Vector2i(sf::Mouse::getPosition(window));
     sf::Font font;
-    font.loadFromFile("../lib/PixeloidMono.ttf");
+    font.loadFromFile("../lib/PressStart.ttf");
 
     while (window.isOpen())
     {
